@@ -60,6 +60,11 @@ class OpenMMMartiniProcess(Process):
         "platform": {"_type": "string", "_default": "CPU"},
         "minimize": {"_type": "boolean", "_default": True},
         "min_iterations": {"_type": "integer", "_default": 500},
+        # gentle equilibration ramp after minimize (essential for freshly
+        # packed/solvated crowded systems, which blow up at full dt otherwise):
+        # run `equil_steps` at `equil_timestep_fs` before production.
+        "equil_steps": {"_type": "integer", "_default": 0},
+        "equil_timestep_fs": {"_type": "float", "_default": 2.0},
         "steps_per_update": {"_type": "integer", "_default": 500},
         "dcd_out": {"_type": "string", "_default": ""},
         "dcd_interval": {"_type": "integer", "_default": 0},
@@ -126,6 +131,18 @@ class OpenMMMartiniProcess(Process):
 
         if self.config["minimize"]:
             sim.minimizeEnergy(maxIterations=int(self.config["min_iterations"]))
+
+        # Equilibration ramp: warm up at a small timestep so residual packing
+        # overlaps relax without integrator blow-up, then restore production dt.
+        equil = int(self.config["equil_steps"])
+        if equil > 0:
+            prod_dt = integrator.getStepSize()
+            integrator.setStepSize(
+                float(self.config["equil_timestep_fs"]) * unit.femtosecond)
+            sim.context.setVelocitiesToTemperature(
+                float(self.config["temperature"]) * unit.kelvin)
+            sim.step(equil)
+            integrator.setStepSize(prod_dt)
 
         if self.config["dcd_out"]:
             interval = int(self.config["dcd_interval"]) or int(self.config["steps_per_update"])
