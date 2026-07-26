@@ -32,6 +32,7 @@ Homepage = "https://github.com/vivarium-collective/pbg-openmm"
 Issues = "https://github.com/vivarium-collective/pbg-openmm/issues"
 
 [tool.pytest.ini_options]
+addopts = ["-m", "not slow"]
 markers = [
     "slow: real OpenMM run",
 ]
