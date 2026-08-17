@@ -1,4 +1,4 @@
-# Contributing to pbg-openmm
+# Contributing to viva-openmm
 
 ## Development setup
 

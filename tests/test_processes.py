@@ -7,7 +7,7 @@ Martini integrator skips when openmm / martini_openmm aren't installed.
 import pytest
 
 from process_bigraph import allocate_core
-from pbg_openmm import OpenMMMartiniProcess, bundled_forcefield
+from viva_openmm import OpenMMMartiniProcess, bundled_forcefield
 
 
 def test_ports_and_instantiation():

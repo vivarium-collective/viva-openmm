@@ -1,4 +1,4 @@
-# pbg-openmm
+# viva-openmm
 
 Process-bigraph wrapper that runs **real Martini 3 coarse-grained molecular
 dynamics** in [OpenMM](https://openmm.org), driven through
@@ -38,7 +38,7 @@ Once installed, the process registers automatically via
 
 ```python
 from process_bigraph import allocate_core
-from pbg_openmm import OpenMMMartiniProcess
+from viva_openmm import OpenMMMartiniProcess
 
 core = allocate_core()
 proc = OpenMMMartiniProcess(config={

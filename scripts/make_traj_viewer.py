@@ -24,7 +24,7 @@ import os
 
 import numpy as np
 
-from pbg_openmm.topology import _moleculetype_name, _moleculetype_natoms
+from viva_openmm.topology import _moleculetype_name, _moleculetype_natoms
 
 # Distinct, readable palette assigned per species (cycled if >len).
 _PALETTE = [
