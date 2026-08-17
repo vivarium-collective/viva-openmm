@@ -8,7 +8,7 @@ resolvable.
 
 import pytest
 
-from pbg_openmm import relax as R
+from viva_openmm import relax as R
 
 
 def test_provenance_shape_without_running(monkeypatch, tmp_path):

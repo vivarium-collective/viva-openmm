@@ -4,7 +4,7 @@ import os
 
 import pytest
 
-from pbg_openmm.topology import (
+from viva_openmm.topology import (
     prepare_martini_top,
     _moleculetype_name,
     _moleculetype_natoms,

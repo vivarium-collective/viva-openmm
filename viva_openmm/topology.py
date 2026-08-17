@@ -23,7 +23,7 @@ from importlib import resources
 
 def bundled_forcefield() -> str:
     """Absolute path to the vendored Martini 3 force-field ``.itp``."""
-    return str(resources.files("pbg_openmm").joinpath("data", "martini_v3.0.0.itp"))
+    return str(resources.files("viva_openmm").joinpath("data", "martini_v3.0.0.itp"))
 
 
 def _moleculetype_name(itp_path: str) -> str | None:

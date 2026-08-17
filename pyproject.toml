@@ -3,7 +3,7 @@ requires = ["hatchling>=1.18"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pbg-openmm"
+name = "viva-openmm"
 version = "0.1.0"
 description = "Process-bigraph wrapper for OpenMM Martini coarse-grained molecular dynamics"
 readme = "README.md"
@@ -28,8 +28,8 @@ dependencies = [
 dev = ["pytest"]
 
 [project.urls]
-Homepage = "https://github.com/vivarium-collective/pbg-openmm"
-Issues = "https://github.com/vivarium-collective/pbg-openmm/issues"
+Homepage = "https://github.com/vivarium-collective/viva-openmm"
+Issues = "https://github.com/vivarium-collective/viva-openmm/issues"
 
 [tool.pytest.ini_options]
 addopts = ["-m", "not slow"]
@@ -38,7 +38,7 @@ markers = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["pbg_openmm"]
+packages = ["viva_openmm", "pbg_openmm"]  # viva_openmm real; pbg_openmm = back-compat import shim
 
 [tool.hatch.build.targets.wheel.force-include]
-"pbg_openmm/data/martini_v3.0.0.itp" = "pbg_openmm/data/martini_v3.0.0.itp"
+"viva_openmm/data/martini_v3.0.0.itp" = "viva_openmm/data/martini_v3.0.0.itp"

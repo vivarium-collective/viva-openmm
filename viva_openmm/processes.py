@@ -179,7 +179,7 @@ class OpenMMMartiniProcess(Process):
         box = st.getPeriodicBoxVectors().value_in_unit(self._unit.nanometer)
         atoms = list(self._sim.topology.atoms())
         with open(path, "w") as fh:
-            fh.write("pbg-openmm martini final frame\n")
+            fh.write("viva-openmm martini final frame\n")
             fh.write(f"{len(pos)}\n")
             for i, (a, p) in enumerate(zip(atoms, pos)):
                 fh.write("%5d%-5s%5s%5d%8.3f%8.3f%8.3f\n" % (
