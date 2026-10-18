@@ -42,3 +42,4 @@ packages = ["viva_openmm", "pbg_openmm"]  # viva_openmm real; pbg_openmm = back-
 
 [tool.hatch.build.targets.wheel.force-include]
 "viva_openmm/data/martini_v3.0.0.itp" = "viva_openmm/data/martini_v3.0.0.itp"
+"viva_openmm/data/martini_v3.0.0_fatty_acids_v1.itp" = "viva_openmm/data/martini_v3.0.0_fatty_acids_v1.itp"

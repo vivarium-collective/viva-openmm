@@ -1,0 +1,198 @@
+;;;;; Martini 3 single-chain saturated FATTY ACIDS (C10/C12/C14/C16)
+;;;;;
+;;;;; STATUS: Martini-3 building-block CONSTRUCTION (proposed_input) - NOT a
+;;;;; verbatim entry from a published topology database. The Martini 3 Lipidome
+;;;;; (Pedersen et al., ACS Cent. Sci. 2025, 11(9):1598) is phospholipid-centric
+;;;;; and ships no single-chain fatty-acid .itp we could source directly, so
+;;;;; these are assembled from the documented Martini 3 building blocks. Each
+;;;;; choice below is grounded; the ONE label still needing expert confirmation
+;;;;; against the Souza 2021 small-molecule table is the neutral COOH head bead
+;;;;; (SP2, flagged <<CONFIRM>> inline).
+;;;;;
+;;;;; GROUNDING
+;;;;;   - Saturated tail = C1 beads; bonds 0.47 nm / fc 3800; angles 180.0 / fc 35
+;;;;;     - taken VERBATIM from the real Martini 3 saturated di-acyl PC/PS tails
+;;;;;     in martini_v3.0.0_phospholipids_v1.itp (DPPC di-C16:0, DPPS). These are
+;;;;;     authoritative, not constructed.
+;;;;;   - Deprotonated carboxylate COO(-)  head = Q5 (charge -1.0). Q5 is the
+;;;;;     Martini 3 carboxylate/phosphate-class charged bead; the lipidome uses
+;;;;;     Q5 for the lipid phosphate (see PO4 in DPPC/DPPS above). CONFIRMED.
+;;;;;   - Protonated carboxylic-acid COOH head = SP2 (charge 0.0). SP2 is the
+;;;;;     small (3:1) polar bead of the P2 carboxylic-acid class. <<CONFIRM vs
+;;;;;     Souza 2021 Nat. Methods 2021 building-block table - P2 vs SP2 sizing>>
+;;;;;   - Head->first-tail bond 0.47 nm / fc 5000 and head-tail-tail angle
+;;;;;     180.0 / fc 35 - analogous to the glycerol->C1A linkage (0.47/5000) and
+;;;;;     the linear saturated-tail angles in the PC/PS templates.
+;;;;;   - Bead count: COO head + round((nC-1)/4) C1 tail beads (standard Martini
+;;;;;     ~4:1 saturated mapping): C10->2, C12->3, C14->3, C16->4 tail beads.
+;;;;;
+;;;;; PROTONATION / pH: standard (fixed-charge) Martini. pH is NOT dynamic here -
+;;;;; a run selects a FIXED ratio of the protonated (FAnn, SP2, neutral) to the
+;;;;; deprotonated (FAnnM, Q5, -1) species, set from the carboxylate pKa (~4.8)
+;;;;; vs the modelled local pH. For dynamic constant-pH use the titratable
+;;;;; Martini model (Grunewald et al. 2020); not used here.
+;;;;;
+;;;;; References (proposed): pedersen2025lipidome, janke2014oleic, souza2021martini3.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; PROTONATED (neutral COOH) species - head bead SP2, charge 0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; --- C10:0 decanoic (capric) acid, protonated ---
+[moleculetype]
+  FA10          1
+
+[atoms]
+; id  type  resnr  residu  atom  cgnr  charge
+   1  SP2    1  FA10  COO   1   0.0
+   2  C1     1  FA10  C1A   2   0.0
+   3  C1     1  FA10  C2A   3   0.0
+
+[bonds]
+;  i  j  funct  length  force.c.
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+
+[angles]
+;  i  j  k  funct  angle  force.c.
+   1  2  3  2  180.0  35.0
+
+; --- C12:0 dodecanoic (lauric) acid, protonated ---
+[moleculetype]
+  FA12          1
+
+[atoms]
+   1  SP2    1  FA12  COO   1   0.0
+   2  C1     1  FA12  C1A   2   0.0
+   3  C1     1  FA12  C2A   3   0.0
+   4  C1     1  FA12  C3A   4   0.0
+
+[bonds]
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+   3  4  1  0.47  3800
+
+[angles]
+   1  2  3  2  180.0  35.0
+   2  3  4  2  180.0  35.0
+
+; --- C14:0 tetradecanoic (myristic) acid, protonated ---
+[moleculetype]
+  FA14          1
+
+[atoms]
+   1  SP2    1  FA14  COO   1   0.0
+   2  C1     1  FA14  C1A   2   0.0
+   3  C1     1  FA14  C2A   3   0.0
+   4  C1     1  FA14  C3A   4   0.0
+
+[bonds]
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+   3  4  1  0.47  3800
+
+[angles]
+   1  2  3  2  180.0  35.0
+   2  3  4  2  180.0  35.0
+
+; --- C16:0 hexadecanoic (palmitic) acid, protonated ---
+[moleculetype]
+  FA16          1
+
+[atoms]
+   1  SP2    1  FA16  COO   1   0.0
+   2  C1     1  FA16  C1A   2   0.0
+   3  C1     1  FA16  C2A   3   0.0
+   4  C1     1  FA16  C3A   4   0.0
+   5  C1     1  FA16  C4A   5   0.0
+
+[bonds]
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+   3  4  1  0.47  3800
+   4  5  1  0.47  3800
+
+[angles]
+   1  2  3  2  180.0  35.0
+   2  3  4  2  180.0  35.0
+   3  4  5  2  180.0  35.0
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; DEPROTONATED (carboxylate COO-) species - head bead Q5, charge -1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; --- C10:0 decanoate (caprate), deprotonated ---
+[moleculetype]
+  FA10M         1
+
+[atoms]
+   1  Q5     1  FA10M  COO   1  -1.0
+   2  C1     1  FA10M  C1A   2   0.0
+   3  C1     1  FA10M  C2A   3   0.0
+
+[bonds]
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+
+[angles]
+   1  2  3  2  180.0  35.0
+
+; --- C12:0 dodecanoate (laurate), deprotonated ---
+[moleculetype]
+  FA12M         1
+
+[atoms]
+   1  Q5     1  FA12M  COO   1  -1.0
+   2  C1     1  FA12M  C1A   2   0.0
+   3  C1     1  FA12M  C2A   3   0.0
+   4  C1     1  FA12M  C3A   4   0.0
+
+[bonds]
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+   3  4  1  0.47  3800
+
+[angles]
+   1  2  3  2  180.0  35.0
+   2  3  4  2  180.0  35.0
+
+; --- C14:0 tetradecanoate (myristate), deprotonated ---
+[moleculetype]
+  FA14M         1
+
+[atoms]
+   1  Q5     1  FA14M  COO   1  -1.0
+   2  C1     1  FA14M  C1A   2   0.0
+   3  C1     1  FA14M  C2A   3   0.0
+   4  C1     1  FA14M  C3A   4   0.0
+
+[bonds]
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+   3  4  1  0.47  3800
+
+[angles]
+   1  2  3  2  180.0  35.0
+   2  3  4  2  180.0  35.0
+
+; --- C16:0 hexadecanoate (palmitate), deprotonated ---
+[moleculetype]
+  FA16M         1
+
+[atoms]
+   1  Q5     1  FA16M  COO   1  -1.0
+   2  C1     1  FA16M  C1A   2   0.0
+   3  C1     1  FA16M  C2A   3   0.0
+   4  C1     1  FA16M  C3A   4   0.0
+   5  C1     1  FA16M  C4A   5   0.0
+
+[bonds]
+   1  2  1  0.47  5000
+   2  3  1  0.47  3800
+   3  4  1  0.47  3800
+   4  5  1  0.47  3800
+
+[angles]
+   1  2  3  2  180.0  35.0
+   2  3  4  2  180.0  35.0
+   3  4  5  2  180.0  35.0
