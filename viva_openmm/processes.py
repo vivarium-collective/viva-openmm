@@ -5,8 +5,11 @@
 via ``martini_openmm`` (reaction-field electrostatics, Martini nonbonded). It
 takes a Martini coordinate file (``.gro``) + topology (``.top`` with per-molecule
 ``.itp`` includes) -- e.g. pbg-martini's parsimony->Martini E. coli slice -- and
-advances it: it energy-minimizes once, then integrates NVT, emitting potential
-energy and (optionally) a DCD trajectory.
+advances it: it energy-minimizes once, then integrates NVT -- or NPT, when a
+``barostat`` is configured (``isotropic`` for a bulk box, or ``membrane`` for a
+semi-isotropic bilayer/vesicle barostat that relaxes the membrane area at an
+optional surface tension) -- emitting potential energy and (optionally) a DCD
+trajectory.
 
 Realism follows Stevens et al. 2023 (Front. Chem. 11:1106495), the Martini
 JCVI-syn3A whole-cell model: same force field, reaction-field handling, 310 K,
@@ -68,12 +71,22 @@ class OpenMMMartiniProcess(Process):
         "steps_per_update": {"_type": "integer", "_default": 500},
         "dcd_out": {"_type": "string", "_default": ""},
         "dcd_interval": {"_type": "integer", "_default": 0},
+        # Ensemble: "none" -> NVT (default). "isotropic" -> NPT with a
+        # MonteCarloBarostat (box scales uniformly). "membrane" -> NPT with a
+        # semi-isotropic MonteCarloMembraneBarostat (XY coupled, Z free) at
+        # `surface_tension_bar_nm` -- the ensemble a lipid bilayer / vesicle
+        # needs so its area relaxes without the box crushing the curved shell.
+        "barostat": {"_type": "string", "_default": "none"},
+        "pressure_bar": {"_type": "float", "_default": 1.0},
+        "surface_tension_bar_nm": {"_type": "float", "_default": 0.0},
+        "barostat_interval": {"_type": "integer", "_default": 25},
     }
 
     def __init__(self, config=None, core=None):
         super().__init__(config=config, core=core)
         self._sim = None
         self._unit = None
+        self._baro_temp_param = None
 
     def inputs(self):
         return {"temperature": "float"}
@@ -121,6 +134,28 @@ class OpenMMMartiniProcess(Process):
         system = top.create_system(
             nonbonded_cutoff=float(self.config["nonbonded_cutoff_nm"]) * unit.nanometer)
 
+        # Optional barostat (NPT). Added as a Force BEFORE the Context is built.
+        baro = str(self.config["barostat"]).strip().lower()
+        if baro and baro != "none":
+            from openmm import MonteCarloBarostat, MonteCarloMembraneBarostat
+            P = float(self.config["pressure_bar"]) * unit.bar
+            T = float(self.config["temperature"]) * unit.kelvin
+            ival = int(self.config["barostat_interval"])
+            if baro in ("membrane", "semi-isotropic", "semiisotropic"):
+                gamma = float(self.config["surface_tension_bar_nm"]) * unit.bar * unit.nanometer
+                baro_force = MonteCarloMembraneBarostat(
+                    P, gamma, T,
+                    MonteCarloMembraneBarostat.XYIsotropic,
+                    MonteCarloMembraneBarostat.ZFree, ival)
+                self._baro_temp_param = MonteCarloMembraneBarostat.Temperature()
+            elif baro in ("isotropic", "npt"):
+                baro_force = MonteCarloBarostat(P, T, ival)
+                self._baro_temp_param = MonteCarloBarostat.Temperature()
+            else:
+                raise ValueError(
+                    f"unknown barostat {baro!r}; use none|isotropic|membrane")
+            system.addForce(baro_force)
+
         integrator = LangevinMiddleIntegrator(
             float(self.config["temperature"]) * unit.kelvin,
             float(self.config["friction_per_ps"]) / unit.picosecond,
@@ -159,6 +194,9 @@ class OpenMMMartiniProcess(Process):
         temp = state.get("temperature")
         if temp:
             self._integrator.setTemperature(float(temp) * self._unit.kelvin)
+            # keep an NPT barostat's reference temperature in sync
+            if self._baro_temp_param is not None:
+                self._sim.context.setParameter(self._baro_temp_param, float(temp))
 
         n = int(self.config["steps_per_update"])
         self._sim.step(n)

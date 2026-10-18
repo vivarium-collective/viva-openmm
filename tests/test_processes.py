@@ -81,3 +81,54 @@ def test_real_martini_md_runs(tmp_path):
     gro = p.write_final_gro(str(tmp_path / "final.gro"))
     text = open(gro).read()
     assert text.splitlines()[1].strip() == "2"   # 2 particles round-tripped
+
+
+def _npt_process(tmp_path, **extra):
+    """Build an OpenMMMartiniProcess on the 2-water fixture with NPT config."""
+    (tmp_path / "W.itp").write_text(_WATER_ITP)
+    (tmp_path / "system.gro").write_text(_WATER_GRO)
+    (tmp_path / "system.top").write_text(_WATER_TOP)
+    cfg = {
+        "gro": str(tmp_path / "system.gro"),
+        "top": str(tmp_path / "system.top"),
+        "itp_dir": str(tmp_path),
+        "platform": "Reference",
+        "minimize": True, "min_iterations": 50,
+        "steps_per_update": 20, "barostat_interval": 10,
+    }
+    cfg.update(extra)
+    return OpenMMMartiniProcess(config=cfg, core=allocate_core())
+
+
+@pytest.mark.slow
+def test_npt_isotropic_barostat_runs(tmp_path):
+    pytest.importorskip("openmm")
+    pytest.importorskip("martini_openmm")
+    p = _npt_process(tmp_path, barostat="isotropic", pressure_bar=1.0)
+    out = p.update(p.initial_state(), interval=1.0)        # also drives baro temp
+    assert out["n_steps"] == 20
+    assert out["potential_energy"] == out["potential_energy"]   # finite
+    forces = [type(f).__name__ for f in p._sim.system.getForces()]
+    assert "MonteCarloBarostat" in forces
+
+
+@pytest.mark.slow
+def test_npt_membrane_barostat_runs(tmp_path):
+    pytest.importorskip("openmm")
+    pytest.importorskip("martini_openmm")
+    # semi-isotropic (XY coupled, Z free) -- the bilayer/vesicle ensemble
+    p = _npt_process(tmp_path, barostat="membrane", surface_tension_bar_nm=0.0)
+    out = p.update(p.initial_state(), interval=1.0)
+    assert out["n_steps"] == 20
+    assert out["potential_energy"] == out["potential_energy"]
+    forces = [type(f).__name__ for f in p._sim.system.getForces()]
+    assert "MonteCarloMembraneBarostat" in forces
+
+
+@pytest.mark.slow
+def test_unknown_barostat_raises(tmp_path):
+    pytest.importorskip("openmm")
+    pytest.importorskip("martini_openmm")
+    p = _npt_process(tmp_path, barostat="bogus")
+    with pytest.raises(ValueError, match="unknown barostat"):
+        p.update(p.initial_state(), interval=1.0)

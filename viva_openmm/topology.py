@@ -26,6 +26,18 @@ def bundled_forcefield() -> str:
     return str(resources.files("viva_openmm").joinpath("data", "martini_v3.0.0.itp"))
 
 
+def bundled_fatty_acids() -> str:
+    """Absolute path to the vendored Martini 3 saturated fatty-acid ``.itp``.
+
+    Single-chain C10/C12/C14/C16, each in a protonated (``FAnn``, neutral SP2
+    head) and deprotonated (``FAnnM``, Q5 carboxylate) form. See the file header:
+    these are a documented Martini-3 building-block construction (proposed_input),
+    not a verbatim database entry.
+    """
+    return str(resources.files("viva_openmm").joinpath(
+        "data", "martini_v3.0.0_fatty_acids_v1.itp"))
+
+
 def _moleculetype_name(itp_path: str) -> str | None:
     lines = open(itp_path).read().splitlines()
     for i, ln in enumerate(lines):
