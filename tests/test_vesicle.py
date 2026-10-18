@@ -88,10 +88,13 @@ def test_fatty_acid_spec_matches_itp():
 
 
 @pytest.mark.slow
-def test_fatty_acid_vesicle_builds_in_martini_openmm(tmp_path):
+@pytest.mark.parametrize("protonated", [True, False])
+def test_fatty_acid_vesicle_builds_in_martini_openmm(tmp_path, protonated):
     # The real proof the constructed fatty-acid .itp is valid: the vesicle's
     # .gro/.top loads in martini_openmm and the bead types resolve against the
-    # Martini 3 force field to build a real OpenMM System.
+    # Martini 3 force field to build a real OpenMM System. Both protonation
+    # states are exercised so the matched small head pair resolves -- protonated
+    # SP2 (neutral COOH) and deprotonated SQ5n (carboxylate COO-).
     pytest.importorskip("openmm")
     pytest.importorskip("martini_openmm")
     import martini_openmm as mo
@@ -100,7 +103,7 @@ def test_fatty_acid_vesicle_builds_in_martini_openmm(tmp_path):
     from viva_openmm import (fatty_acid_spec, bundled_forcefield,
                              bundled_fatty_acids)
 
-    lipid = fatty_acid_spec(16, protonated=True)       # palmitic acid, neutral
+    lipid = fatty_acid_spec(16, protonated=protonated)   # palmitic acid / -ate
     gro = str(tmp_path / "ves.gro")
     top = str(tmp_path / "ves.top")
     res = build_vesicle(

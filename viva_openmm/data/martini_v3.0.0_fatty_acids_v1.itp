@@ -14,12 +14,20 @@
 ;;;;;     - taken VERBATIM from the real Martini 3 saturated di-acyl PC/PS tails
 ;;;;;     in martini_v3.0.0_phospholipids_v1.itp (DPPC di-C16:0, DPPS). These are
 ;;;;;     authoritative, not constructed.
-;;;;;   - Deprotonated carboxylate COO(-)  head = Q5 (charge -1.0). Q5 is the
-;;;;;     Martini 3 carboxylate/phosphate-class charged bead; the lipidome uses
-;;;;;     Q5 for the lipid phosphate (see PO4 in DPPC/DPPS above). CONFIRMED.
-;;;;;   - Protonated carboxylic-acid COOH head = SP2 (charge 0.0). SP2 is the
-;;;;;     small (3:1) polar bead of the P2 carboxylic-acid class. <<CONFIRM vs
-;;;;;     Souza 2021 Nat. Methods 2021 building-block table - P2 vs SP2 sizing>>
+;;;;;   - The carboxyl head is a MATCHED SMALL pair (same size class in both
+;;;;;     protonation states -- a group does not change bead size when it (de)
+;;;;;     protonates). A standalone fatty-acid carboxyl (C + 2 O ~ 3 heavy atoms)
+;;;;;     is naturally a SMALL (3:1) bead, and the Martini 3 lipidome's carboxylate
+;;;;;     examples use small carboxylates (SQ5n / S6Q5n), so:
+;;;;;       deprotonated COO(-) head = SQ5n (small, charge -1.0)
+;;;;;       protonated   COOH  head = SP2  (small, charge  0.0)
+;;;;;     Both are mass 54 (small) in martini_v3.0.0.itp -> size-consistent.
+;;;;;     (An earlier draft used regular Q5 for COO(-), borrowed from the lipid
+;;;;;     PHOSPHATE PO4 = P+4O which is genuinely regular; that over-sized the
+;;;;;     carboxyl and broke size-consistency with the small SP2 -- corrected here.)
+;;;;;     <<CONFIRM the exact small labels (SQ5n vs SQ5, SP2 vs another small
+;;;;;     P-class) against the Martini 3 lipidome fatty-acid head mapping
+;;;;;     (cgmartini / Pedersen chemrxiv figure) or the Souza 2021 table.>>
 ;;;;;   - Head->first-tail bond 0.47 nm / fc 5000 and head-tail-tail angle
 ;;;;;     180.0 / fc 35 - analogous to the glycerol->C1A linkage (0.47/5000) and
 ;;;;;     the linear saturated-tail angles in the PC/PS templates.
@@ -28,7 +36,7 @@
 ;;;;;
 ;;;;; PROTONATION / pH: standard (fixed-charge) Martini. pH is NOT dynamic here -
 ;;;;; a run selects a FIXED ratio of the protonated (FAnn, SP2, neutral) to the
-;;;;; deprotonated (FAnnM, Q5, -1) species, set from the carboxylate pKa (~4.8)
+;;;;; deprotonated (FAnnM, SQ5n, -1) species, set from the carboxylate pKa (~4.8)
 ;;;;; vs the modelled local pH. For dynamic constant-pH use the titratable
 ;;;;; Martini model (Grunewald et al. 2020); not used here.
 ;;;;;
@@ -118,7 +126,7 @@
    3  4  5  2  180.0  35.0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; DEPROTONATED (carboxylate COO-) species - head bead Q5, charge -1
+; DEPROTONATED (carboxylate COO-) species - head bead SQ5n (small), charge -1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; --- C10:0 decanoate (caprate), deprotonated ---
@@ -126,7 +134,7 @@
   FA10M         1
 
 [atoms]
-   1  Q5     1  FA10M  COO   1  -1.0
+   1  SQ5n     1  FA10M  COO   1  -1.0
    2  C1     1  FA10M  C1A   2   0.0
    3  C1     1  FA10M  C2A   3   0.0
 
@@ -142,7 +150,7 @@
   FA12M         1
 
 [atoms]
-   1  Q5     1  FA12M  COO   1  -1.0
+   1  SQ5n     1  FA12M  COO   1  -1.0
    2  C1     1  FA12M  C1A   2   0.0
    3  C1     1  FA12M  C2A   3   0.0
    4  C1     1  FA12M  C3A   4   0.0
@@ -161,7 +169,7 @@
   FA14M         1
 
 [atoms]
-   1  Q5     1  FA14M  COO   1  -1.0
+   1  SQ5n     1  FA14M  COO   1  -1.0
    2  C1     1  FA14M  C1A   2   0.0
    3  C1     1  FA14M  C2A   3   0.0
    4  C1     1  FA14M  C3A   4   0.0
@@ -180,7 +188,7 @@
   FA16M         1
 
 [atoms]
-   1  Q5     1  FA16M  COO   1  -1.0
+   1  SQ5n     1  FA16M  COO   1  -1.0
    2  C1     1  FA16M  C1A   2   0.0
    3  C1     1  FA16M  C2A   3   0.0
    4  C1     1  FA16M  C3A   4   0.0
